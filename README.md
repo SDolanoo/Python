@@ -1,0 +1,4 @@
+- 👋 Hi, I’m @SDolanoo
+- 👀 I’m interested in Testing
+- 🌱 I’m currently learning Python, soon CSS, HTML, API
+- 📫 How to reach me: LinkedIN https://www.linkedin.com/in/stanis%C5%82aw-dolazi%C5%84ski-313548288/
