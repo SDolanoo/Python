@@ -23,6 +23,17 @@ class Snake:
             self.all_bodies[body_num].goto(new_x, new_y)
         self.all_bodies[0].forward(20)
 
+    def new_body(self):
+        new_snake_body = Turtle()
+        new_snake_body.penup()
+        new_snake_body.shape("square")
+        new_snake_body.color("white")
+        for body_num in range(len(self.all_bodies) - 1, 0, -1):
+            new_x = self.all_bodies[body_num - 1].xcor()
+            new_y = self.all_bodies[body_num - 1].ycor()
+            new_snake_body.goto(new_x, new_y)
+        self.all_bodies.append(new_snake_body)
+
     def up(self):
         if self.head.heading() != 270:
             self.head.setheading(90)
