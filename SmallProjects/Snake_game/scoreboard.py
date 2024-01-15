@@ -22,4 +22,4 @@ class Scoreboard(Turtle):
     def game_over(self):
         # everything has to end at some point
         self.goto(0,0)
-        self.write(f"!!!GAME OVER, BITCH!!!", False, align="center", font=FONT)
+        self.write(f"!!!GAME OVER!!!", False, align="center", font=FONT)
