@@ -4,7 +4,7 @@ import datetime as dt
 import pandas
 
 my_email = "malytrolll@gmail.com"
-password = "fpupzgzufngfyqzw"
+password = "password"
 
 data = pandas.read_csv("birthdays.csv")
 person_list = data.to_dict(orient='records')
