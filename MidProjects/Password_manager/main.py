@@ -50,7 +50,7 @@ def save():
             password_entry.delete(0, END)
 # ------------------------ BROWSE USER DATA --------------------------- #
 def browse_user_data():
-    website = (website_entry.get()).title()
+    website = (website_entry.get())
     try:
         with open("data.json", "r") as file:
             data = json.load(file)
