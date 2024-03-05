@@ -1,15 +1,12 @@
 import pandas as pd
 
-data = {
-    "username": ["Dubi"],
-    "password": ["Daba"],
-    "balance": [0.0]
-}
-
 
 class FileOperator:
 
     def __init__(self):
+        pass
+
+    def check_balance(self, username:str) -> float:
         pass
 
     def check_credentials(self, username: str, password: str) -> bool:
@@ -76,7 +73,8 @@ class FileOperator:
         finally:
             pass
 
- file_op = FileOperator()
+
+# file_op = FileOperator()
 # file_op.register_or_create_user(data)
 # file_op.add_balance("Dubi", 190.9)
 # file_op.minus_balance("Dubi", 190.9)
