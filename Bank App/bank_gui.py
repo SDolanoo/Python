@@ -6,14 +6,22 @@ THEME_COLOR = "#375362"
 FONT = ("Arial", 20)
 
 
-class MainPage(tk.Tk):
+class BankGui(tk.Tk):
 
     def __init__(self, file_operator: FileOperator):
         super().__init__()
         self.file_op = file_operator
 
-        self.logged_in = False
+class MainPage(BankGui):
 
+    def __init__(self, file_operator: FileOperator):
+        BankGui.__init__(self, file_operator)
+
+        self.logged_in = False
+        self.main_page_setup()
+
+
+    def main_page_setup(self):
         self.title("BankApp")
         self.config(padx=20, pady=20, bg=THEME_COLOR)
         # Canvas
@@ -45,7 +53,7 @@ class MainPage(tk.Tk):
         if self.file_op.check_credentials(username, password):
             # messagebox.showinfo(title="You are logged in.", message="You are logged in.")
             self.logged_in = True
-            self.user_is_logged_in()
+            self.user_is_logged_in(str(username))
         else:
             messagebox.showinfo(title="Invalid credentials", message="Invalid credentials, forgot password?, "
                                                                      "maybe use it as red label popup")
@@ -65,17 +73,21 @@ class MainPage(tk.Tk):
         else:
             self.file_op.register_or_create_user(data)
 
-    def user_is_logged_in(self):
-        if self.logged_in:
-            self.withdraw()
-            #LoggedInUser()
+    # def user_is_logged_in(self, username: str):
+    #     if self.logged_in:
+    #         self.withdraw()
+    #         self. logged_in_user_instance = LoggedInUser(self.file_op, user=username)
 
-class LoggedInUser(tk.Tk):
+class LoggedInUser(BankGui):
 
     def __init__(self, file_operator: FileOperator, user: str):
-        super().__init__()
+        BankGui.__init__(self, file_operator)
         self.user = user
-        self.file_op = file_operator
+        self.logged_in_page_setup()
+        self.mainloop()
+
+    def logged_in_page_setup(self):
+        self.title("BankApp")
         self.config(padx=20, pady=20, bg=THEME_COLOR)
         # Canvas
         self.main_canvas = tk.Canvas(width=200, height=200, bg="white")
@@ -91,25 +103,47 @@ class LoggedInUser(tk.Tk):
         self.log_out_button = tk.Button(text="Log out", command=self.log_out_clicked)
         self.log_out_button.grid(row=3, column=1)
 
-        self.mainloop()
-
-
-
     def withdraw_money_clicked(self):
-        pass
-        # make it in toplevel https://www.geeksforgeeks.org/python-tkinter-toplevel-widget/?ref=lbp
-        # use scale widget for amount https://www.geeksforgeeks.org/python-tkinter-scale-widget/?ref=lbp
-        # or use spinbox
-        # input = input("how much?")
-        # self.file_op.minus_balance(self.user, amount=input)
+        def withdraw_button_clicked():
+            withdraw_amount = float(withdraw_spinbox.get())
+            self.file_op.minus_balance(self.user, withdraw_amount)
+        withdraw_window = tk.Toplevel()
+        withdraw_window.title("Withdraw")
+        withdraw_window.config(padx=20, pady=20, bg=THEME_COLOR)
+        # Label
+        withdraw_label = tk.Label(withdraw_window, text="How much money do you want to withdraw", fg="white", bg=THEME_COLOR)
+        withdraw_label.grid(row=0, column=0)
+        # Spinbox
+        current_value = tk.StringVar()
+        withdraw_spinbox = tk.Spinbox(withdraw_window, from_=50, to=500,
+                                      values=("50", "100", "150", "200", "300", "400", "500"),
+                                      textvariable=current_value, wrap=True, state="readonly")
+        withdraw_spinbox.grid(row=1, column=0)
+        # Button
+        withdraw_button = tk.Button(withdraw_window, text="Withdraw", command=withdraw_button_clicked)
+        withdraw_button.grid(row=2, column=0)
 
     def deposit_money_clicked(self):
-        pass
-        # make it in toplevel https://www.geeksforgeeks.org/python-tkinter-toplevel-widget/?ref=lbp
-        # use scale widget for amount https://www.geeksforgeeks.org/python-tkinter-scale-widget/?ref=lbp
-        # or use spinbox
-        # input = input("how much?")
-        # self.file_op.add_balance(self.user, amount=input)
+        def deposit_button_clicked():
+            deposit_amount = float(deposit_spinbox.get())
+            self.file_op.add_balance(self.user, deposit_amount)
+
+        deposit_window = tk.Toplevel()
+        deposit_window.title("Deposit")
+        deposit_window.config(padx=20, pady=20, bg=THEME_COLOR)
+        # Label
+        deposit_label = tk.Label(deposit_window, text="How much money do you want to deposit", fg="white",
+                                  bg=THEME_COLOR)
+        deposit_label.grid(row=0, column=0)
+        # Spinbox
+        current_value = tk.StringVar()
+        deposit_spinbox = tk.Spinbox(deposit_window, from_=50, to=500,
+                                      values=("50", "100", "150", "200", "300", "400", "500"),
+                                      textvariable=current_value, wrap=True, state="readonly")
+        deposit_spinbox.grid(row=1, column=0)
+        # Button
+        deposit_button = tk.Button(deposit_window, text="Deposit", command=deposit_button_clicked)
+        deposit_button.grid(row=2, column=0)
 
     def transfer_money_clicked(self):
         pass

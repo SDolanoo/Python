@@ -18,8 +18,11 @@ class FileOperator:
         else:
             if (existing_csv["username"].isin([f"{username}"])).any():
                 user_index = existing_csv.index.get_loc(existing_csv[existing_csv["username"] == f"{username}"].index[0])
-                if existing_csv.loc[user_index, "password"] == password:
+                correct_password = existing_csv.loc[user_index, "password"]
+                if str(correct_password) == password:
                     return True
+                else:
+                    print("invalid password")
             else:
                 print("Invalid credentials")
         finally:
@@ -76,7 +79,7 @@ class FileOperator:
 
 # file_op = FileOperator()
 # file_op.register_or_create_user(data)
-# file_op.add_balance("Dubi", 190.9)
+# file_op.add_balance("Dolan", 190.9)
 # file_op.minus_balance("Dubi", 190.9)
 # file_op.update_password("Dubi", "XDDD")
 # if file_op.check_credentials("Dubi", "XDDD"):
