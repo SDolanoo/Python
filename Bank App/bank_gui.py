@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 from file_operator import FileOperator
 
 THEME_COLOR = "#375362"
@@ -12,14 +12,12 @@ class BankGui(tk.Tk):
         super().__init__()
         self.file_op = file_operator
 
+
 class MainPage(BankGui):
 
     def __init__(self, file_operator: FileOperator):
         BankGui.__init__(self, file_operator)
-
-        self.logged_in = False
         self.main_page_setup()
-
 
     def main_page_setup(self):
         self.title("BankApp")
@@ -71,12 +69,12 @@ class MainPage(BankGui):
         if len(username) <= 0 and len(password) <= 0:
             messagebox.showinfo(title="Oops", message="Please make sure you haven't left any fields empty.")
         else:
-            self.file_op.register_or_create_user(data)
+            self.file_op.register_user(data)
 
-    # def user_is_logged_in(self, username: str):
-    #     if self.logged_in:
-    #         self.withdraw()
-    #         self. logged_in_user_instance = LoggedInUser(self.file_op, user=username)
+    def user_is_logged_in(self, username: str):
+        self.destroy()
+        LoggedInUser(file_operator=self.file_op, user=username)
+
 
 class LoggedInUser(BankGui):
 
@@ -107,11 +105,14 @@ class LoggedInUser(BankGui):
         def withdraw_button_clicked():
             withdraw_amount = float(withdraw_spinbox.get())
             self.file_op.minus_balance(self.user, withdraw_amount)
+
+        # new window setup
         withdraw_window = tk.Toplevel()
         withdraw_window.title("Withdraw")
         withdraw_window.config(padx=20, pady=20, bg=THEME_COLOR)
         # Label
-        withdraw_label = tk.Label(withdraw_window, text="How much money do you want to withdraw", fg="white", bg=THEME_COLOR)
+        withdraw_label = tk.Label(withdraw_window, text="How much money do you want to withdraw", fg="white",
+                                  bg=THEME_COLOR)
         withdraw_label.grid(row=0, column=0)
         # Spinbox
         current_value = tk.StringVar()
@@ -128,35 +129,69 @@ class LoggedInUser(BankGui):
             deposit_amount = float(deposit_spinbox.get())
             self.file_op.add_balance(self.user, deposit_amount)
 
+        # new window setup
         deposit_window = tk.Toplevel()
         deposit_window.title("Deposit")
         deposit_window.config(padx=20, pady=20, bg=THEME_COLOR)
         # Label
         deposit_label = tk.Label(deposit_window, text="How much money do you want to deposit", fg="white",
-                                  bg=THEME_COLOR)
+                                 bg=THEME_COLOR)
         deposit_label.grid(row=0, column=0)
         # Spinbox
         current_value = tk.StringVar()
         deposit_spinbox = tk.Spinbox(deposit_window, from_=50, to=500,
-                                      values=("50", "100", "150", "200", "300", "400", "500"),
-                                      textvariable=current_value, wrap=True, state="readonly")
+                                     values=("50", "100", "150", "200", "300", "400", "500"),
+                                     textvariable=current_value, wrap=True, state="readonly")
         deposit_spinbox.grid(row=1, column=0)
         # Button
         deposit_button = tk.Button(deposit_window, text="Deposit", command=deposit_button_clicked)
         deposit_button.grid(row=2, column=0)
 
     def transfer_money_clicked(self):
-        pass
-        # make it in toplevel, https://www.geeksforgeeks.org/python-tkinter-toplevel-widget/?ref=lbp
-        # use scale widget for amount https://www.geeksforgeeks.org/python-tkinter-scale-widget/?ref=lbp
-        # or use spinbox
-        # use combobox for users in data.csv https://www.geeksforgeeks.org/combobox-widget-in-tkinter-python/?ref=lbp
-        # input = input("how much?")
-        # to_who = input("to who?")
-        # self.file_op.add_balance(to_who, amount=input)
-        # self.file_op.minus_balance(self.user, amount=input)
+        def transfer_button_clicked():
+            transfer_amount = float(transfer_spinbox.get())
+            transfer_person = transfer_combobox.get()
+            if len(transfer_combobox.get()) == 0:
+                messagebox.showinfo(title="Oops", message="Please make sure you haven't left any fields empty.")
+            else:
+                if messagebox.askquestion("Confirmation",
+                                          f"Are you sure you want to transfer {transfer_amount} to"
+                                          f" {transfer_person}?"):
+                    self.file_op.minus_balance(self.user, transfer_amount)
+                    self.file_op.add_balance(transfer_person, transfer_amount)
+                    print("money transferred")
+
+        # new window setup
+        transfer_window = tk.Toplevel()
+        transfer_window.title("Deposit")
+        transfer_window.config(padx=20, pady=20, bg=THEME_COLOR)
+        # Label
+        transfer_label = tk.Label(transfer_window, text="How much money do you want to transfer", fg="white",
+                                  bg=THEME_COLOR)
+        transfer_label.grid(row=0, column=0)
+        username_label = tk.Label(transfer_window, text="To who do you want to transfer", fg="white",
+                                  bg=THEME_COLOR)
+        username_label.grid(row=2, column=0)
+        # Spinbox
+        current_value = tk.StringVar()
+        transfer_spinbox = tk.Spinbox(transfer_window, from_=50, to=500,
+                                      values=("50", "100", "150", "200", "300", "400", "500"),
+                                      textvariable=current_value, wrap=True, state="readonly")
+        transfer_spinbox.grid(row=1, column=0)
+        # Combobox
+        x = tk.StringVar()
+        transfer_combobox = ttk.Combobox(transfer_window, width=27, textvariable=x, state="readonly")
+        data = self.file_op.get_all_users()
+        data.remove(self.user)
+        transfer_combobox['values'] = data
+        transfer_combobox.grid(row=3, column=0)
+        # Button
+        transfer_button = tk.Button(transfer_window, text="Deposit", command=transfer_button_clicked)
+        transfer_button.grid(row=4, column=0)
 
     def log_out_clicked(self):
-        pass
-        # message box "are you sure?"
-        # go back to main page
+        self.destroy()
+        MainPage(file_operator=self.file_op)
+
+#file = FileOperator()
+#log = LoggedInUser(file, "Dolan")
